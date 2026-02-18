@@ -1,4 +1,4 @@
-const GROQ_API_KEY = window.GROQ_API_KEY || "REPLACE_ME";
+const GROQ_API_KEY = "REPLACE_ME";
 
 const STUDENT_CONTEXT = `
 You are CampusConnect, an intelligent onboarding assistant for TCET (Thakur College of Engineering and Technology), Mumbai.
