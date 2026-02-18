@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusConnect - Smart Onboarding Agent</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <i class="fas fa-graduation-cap"></i>
+      <span>CampusConnect</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
+      <button class="nav-btn" onclick="showPage('chat')">AI Agent</button>
+      <button class="nav-btn" onclick="showPage('admin')">Admin View</button>
+    </div>
+    <div class="nav-user">
+      <div class="user-avatar">MS</div>
+      <span>Mansi S.</span>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD PAGE -->
+  <div id="page-dashboard" class="page active">
+    <div class="container">
+
+      <!-- Welcome Banner -->
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h1>Welcome, Mansi! 👋</h1>
+          <p>Computer Engineering • Roll No: CE2024001 • Hostel Student</p>
+          <div class="risk-badge low">🟢 Low Risk — You're on track!</div>
+        </div>
+        <div class="welcome-stats">
+          <div class="stat-circle">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <path class="circle" stroke-dasharray="65, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <text x="18" y="20.35" class="percentage">65%</text>
+            </svg>
+            <p>Onboarding Complete</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Gamification Bar -->
+      <div class="section-card">
+        <h2><i class="fas fa-trophy"></i> Your Onboarding Journey</h2>
+        <div class="level-bar">
+          <div class="level-info">
+            <span class="level-badge">🎯 Level 3: Document Pro</span>
+            <span class="xp-text">650 XP / 1000 XP to next level</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 65%"></div>
+          </div>
+          <p class="leaderboard-hint">🏆 You're ahead of <strong>72%</strong> of your batch!</p>
+        </div>
+
+        <div class="milestones">
+          <div class="milestone done"><i class="fas fa-check-circle"></i><span>Admission Confirmed</span></div>
+          <div class="milestone done"><i class="fas fa-check-circle"></i><span>Documents Submitted</span></div>
+          <div class="milestone done"><i class="fas fa-check-circle"></i><span>ID Card Collected</span></div>
+          <div class="milestone active"><i class="fas fa-spinner fa-spin"></i><span>Fee Payment</span></div>
+          <div class="milestone"><i class="fas fa-circle"></i><span>Course Registration</span></div>
+          <div class="milestone"><i class="fas fa-circle"></i><span>Hostel Allotment</span></div>
+          <div class="milestone"><i class="fas fa-circle"></i><span>LMS Setup</span></div>
+        </div>
+      </div>
+
+      <!-- Task Checklist + Deadline Risk -->
+      <div class="two-col">
+        <div class="section-card">
+          <h2><i class="fas fa-tasks"></i> Your Personalized Checklist</h2>
+          <div class="checklist">
+            <div class="task done">
+              <input type="checkbox" checked id="t1"/><label for="t1">Submit 10th & 12th Marksheets</label>
+              <span class="tag done-tag">Done ✓</span>
+            </div>
+            <div class="task done">
+              <input type="checkbox" checked id="t2"/><label for="t2">Submit Aadhar Card Copy</label>
+              <span class="tag done-tag">Done ✓</span>
+            </div>
+            <div class="task done">
+              <input type="checkbox" checked id="t3"/><label for="t3">Collect College ID Card</label>
+              <span class="tag done-tag">Done ✓</span>
+            </div>
+            <div class="task urgent">
+              <input type="checkbox" id="t4" onchange="completeTask(this, 'fee')"/><label for="t4">Pay First Year Tuition Fee</label>
+              <span class="tag urgent-tag">⚡ Due in 2 days</span>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="t5"/><label for="t5">Register for Semester 1 Courses</label>
+              <span class="tag pending-tag">Due Feb 25</span>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="t6"/><label for="t6">Fill Hostel Preference Form</label>
+              <span class="tag pending-tag">Due Feb 28</span>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="t7"/><label for="t7">Complete LMS Registration</label>
+              <span class="tag pending-tag">Due Mar 1</span>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="t8"/><label for="t8">Attend Mentoring Session</label>
+              <span class="tag pending-tag">Due Mar 5</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h2><i class="fas fa-exclamation-triangle"></i> Deadline Risk Meter</h2>
+          <div class="risk-items">
+            <div class="risk-item high">
+              <div class="risk-header">
+                <span class="risk-icon">🔴</span>
+                <span class="risk-title">Tuition Fee Payment</span>
+                <span class="risk-level">HIGH RISK</span>
+              </div>
+              <div class="risk-bar-wrap"><div class="risk-fill" style="width:90%; background:#ff4757"></div></div>
+              <p>Due: Feb 20, 2026 — 2 days left. <a href="#" onclick="openChat('fee payment deadline')">Ask AI Agent →</a></p>
+            </div>
+            <div class="risk-item medium">
+              <div class="risk-header">
+                <span class="risk-icon">🟡</span>
+                <span class="risk-title">Course Registration</span>
+                <span class="risk-level">MEDIUM</span>
+              </div>
+              <div class="risk-bar-wrap"><div class="risk-fill" style="width:55%; background:#ffa502"></div></div>
+              <p>Due: Feb 25, 2026 — 7 days left</p>
+            </div>
+            <div class="risk-item low">
+              <div class="risk-header">
+                <span class="risk-icon">🟢</span>
+                <span class="risk-title">Hostel Form Submission</span>
+                <span class="risk-level">LOW</span>
+              </div>
+              <div class="risk-bar-wrap"><div class="risk-fill" style="width:25%; background:#2ed573"></div></div>
+              <p>Due: Feb 28, 2026 — 10 days left</p>
+            </div>
+            <div class="risk-item low">
+              <div class="risk-header">
+                <span class="risk-icon">🟢</span>
+                <span class="risk-title">LMS Setup</span>
+                <span class="risk-level">LOW</span>
+              </div>
+              <div class="risk-bar-wrap"><div class="risk-fill" style="width:15%; background:#2ed573"></div></div>
+              <p>Due: Mar 1, 2026 — 11 days left</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Agents -->
+      <div class="section-card">
+        <h2><i class="fas fa-robot"></i> Specialized Agents — Ask Anything</h2>
+        <div class="agents-grid">
+          <div class="agent-card" onclick="openChat('document checklist for computer engineering student')">
+            <div class="agent-icon doc">📄</div>
+            <h3>Document Agent</h3>
+            <p>Validate docs, get checklists</p>
+          </div>
+          <div class="agent-card" onclick="openChat('fee payment process and scholarship information')">
+            <div class="agent-icon fin">💰</div>
+            <h3>Financial Agent</h3>
+            <p>Fee payment, scholarships</p>
+          </div>
+          <div class="agent-card" onclick="openChat('course registration and timetable for sem 1 computer engineering')">
+            <div class="agent-icon acad">📚</div>
+            <h3>Academic Agent</h3>
+            <p>Courses, timetable, LMS</p>
+          </div>
+          <div class="agent-card" onclick="openChat('hostel allocation process and room preferences')">
+            <div class="agent-icon hostel">🏠</div>
+            <h3>Hostel Agent</h3>
+            <p>Room allocation, roommates</p>
+          </div>
+          <div class="agent-card" onclick="openChat('how to connect with senior mentor from computer engineering')">
+            <div class="agent-icon mentor">🤝</div>
+            <h3>Mentor Agent</h3>
+            <p>Faculty, peer connections</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AI CHAT PAGE -->
+  <div id="page-chat" class="page">
+    <div class="chat-layout">
+      <div class="chat-sidebar">
+        <h3>💡 Quick Questions</h3>
+        <div class="quick-questions">
+          <button onclick="sendQuick('What documents do I need for hostel admission?')">📄 Hostel documents?</button>
+          <button onclick="sendQuick('How do I pay my tuition fee online?')">💳 Fee payment steps?</button>
+          <button onclick="sendQuick('How to register for semester 1 courses?')">📚 Course registration?</button>
+          <button onclick="sendQuick('What is the LMS and how do I log in?')">💻 LMS setup help?</button>
+          <button onclick="sendQuick('Is there any scholarship for students with family income below 2 lakhs?')">🎓 Scholarship info?</button>
+          <button onclick="sendQuick('How does room allocation work in hostel?')">🏠 Room allocation?</button>
+          <button onclick="sendQuick('I am feeling very confused and stressed about onboarding')">😟 I feel overwhelmed</button>
+        </div>
+        <div class="agent-status">
+          <h3>🤖 Active Agents</h3>
+          <div class="status-item"><span class="dot green"></span> Document Agent</div>
+          <div class="status-item"><span class="dot green"></span> Financial Agent</div>
+          <div class="status-item"><span class="dot green"></span> Academic Agent</div>
+          <div class="status-item"><span class="dot green"></span> Hostel Agent</div>
+          <div class="status-item"><span class="dot green"></span> Mentor Agent</div>
+        </div>
+      </div>
+
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="chat-title">
+            <div class="bot-avatar">🤖</div>
+            <div>
+              <h2>CampusConnect AI Agent</h2>
+              <p class="online-status">● Online — Powered by Gemini AI</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="message bot">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble">
+              <p>Hello Mansi! 👋 I'm your <strong>CampusConnect AI Agent</strong> — your personal onboarding companion for TCET.</p>
+              <p>I can help you with <strong>documents, fee payment, course registration, hostel allocation, LMS setup, and mentoring</strong>.</p>
+              <p>Your onboarding is <strong>65% complete</strong>. Your most urgent task is <strong>Fee Payment (due in 2 days!)</strong> 🚨</p>
+              <p>What would you like help with today?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <div class="typing-indicator" id="typingIndicator" style="display:none">
+            <span></span><span></span><span></span> AI Agent is thinking...
+          </div>
+          <div class="input-row">
+            <input type="text" id="chatInput" placeholder="Ask me anything about your onboarding..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+          </div>
+          <p class="disclaimer">🔒 Powered by Google Gemini AI • Your data is private</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PAGE -->
+  <div id="page-admin" class="page">
+    <div class="container">
+      <div class="admin-header">
+        <h1>🏛️ College Admin Dashboard</h1>
+        <p>Real-time student onboarding analytics — TCET 2024-25 Batch</p>
+      </div>
+
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="stat-num blue">847</div>
+          <div class="stat-label">Total Students</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-num green">612</div>
+          <div class="stat-label">On Track</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-num orange">178</div>
+          <div class="stat-label">Needs Attention</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-num red">57</div>
+          <div class="stat-label">High Risk</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="section-card">
+          <h2>📊 Onboarding Stage Progress</h2>
+          <div class="stage-bars">
+            <div class="stage-row"><span>Document Verification</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:92%">92%</div></div></div>
+            <div class="stage-row"><span>Fee Payment</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:68%; background:#ffa502">68%</div></div></div>
+            <div class="stage-row"><span>Course Registration</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:45%; background:#ffa502">45%</div></div></div>
+            <div class="stage-row"><span>Hostel Allocation</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:38%; background:#ff4757">38%</div></div></div>
+            <div class="stage-row"><span>LMS Onboarding</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:31%; background:#ff4757">31%</div></div></div>
+            <div class="stage-row"><span>Mentor Assignment</span><div class="stage-bar-wrap"><div class="stage-fill" style="width:22%; background:#ff4757">22%</div></div></div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h2>🚨 High-Risk Student Alerts</h2>
+          <div class="alert-list">
+            <div class="alert-item red-alert">
+              <div class="alert-name">Rahul Sharma (CE2024045)</div>
+              <div class="alert-issue">Fee not paid — deadline tomorrow</div>
+              <button class="alert-btn">Send Reminder</button>
+            </div>
+            <div class="alert-item red-alert">
+              <div class="alert-name">Priya Patel (ME2024023)</div>
+              <div class="alert-issue">Documents incomplete — 3 missing</div>
+              <button class="alert-btn">Send Reminder</button>
+            </div>
+            <div class="alert-item orange-alert">
+              <div class="alert-name">Arjun Kumar (IT2024067)</div>
+              <div class="alert-issue">Course registration pending</div>
+              <button class="alert-btn">Send Reminder</button>
+            </div>
+            <div class="alert-item orange-alert">
+              <div class="alert-name">Sneha Joshi (EXTC2024012)</div>
+              <div class="alert-issue">Asked same question 3 times — escalate</div>
+              <button class="alert-btn escalate">Escalate to Counselor</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>💬 Most Asked Questions Today</h2>
+        <div class="faq-list">
+          <div class="faq-item"><span>1. How to pay fee online?</span><span class="faq-count">234 queries</span></div>
+          <div class="faq-item"><span>2. Documents required for hostel?</span><span class="faq-count">189 queries</span></div>
+          <div class="faq-item"><span>3. Course registration deadline?</span><span class="faq-count">156 queries</span></div>
+          <div class="faq-item"><span>4. How to access LMS?</span><span class="faq-count">143 queries</span></div>
+          <div class="faq-item"><span>5. Scholarship eligibility criteria?</span><span class="faq-count">98 queries</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
