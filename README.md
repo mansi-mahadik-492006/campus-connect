@@ -4,7 +4,7 @@
 **Team TechTitans** | Problem Statement #6 | INNOVGENIUS Hackathon
 
 ## 🚀 Live Demo
-[View Live →](https://YOURUSERNAME.github.io/campus-connect)
+[View Live →](https://campus-connect-68yth2mt0-mansi-mahadiks-projects.vercel.app/)
 
 ## 💡 What It Does
 CampusConnect is an AI-powered onboarding companion that guides engineering students through their entire first-year onboarding lifecycle — from document submission to LMS setup.
