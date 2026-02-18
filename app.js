@@ -1,11 +1,5 @@
-// ============================================
-// CAMPUSCONNECT AI AGENT - app.js
-// ============================================
-
-// 🔑 YOUR GROQ API KEY
 const GROQ_API_KEY = window.GROQ_API_KEY || "REPLACE_ME";
 
-// Student context for personalized AI responses
 const STUDENT_CONTEXT = `
 You are CampusConnect, an intelligent onboarding assistant for TCET (Thakur College of Engineering and Technology), Mumbai.
 
@@ -65,9 +59,6 @@ IMPORTANT BEHAVIOR RULES:
 
 let questionFrequency = {};
 
-// ============================================
-// PAGE NAVIGATION
-// ============================================
 
 function showPage(pageName) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -76,7 +67,7 @@ function showPage(pageName) {
   event.target.classList.add('active');
 }
 
-// Open chat with a pre-filled question from dashboard agent cards
+
 function openChat(question) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -88,15 +79,12 @@ function openChat(question) {
   }, 300);
 }
 
-// Quick question buttons in chat sidebar
+
 function sendQuick(question) {
   document.getElementById('chatInput').value = question;
   sendMessage();
 }
 
-// ============================================
-// TASK & TOAST
-// ============================================
 
 function completeTask(checkbox, taskType) {
   if (checkbox.checked) {
@@ -113,9 +101,6 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// ============================================
-// SENTIMENT & FREQUENCY DETECTION
-// ============================================
 
 function detectSentiment(text) {
   const stressWords = ['confused', 'stressed', 'lost', 'overwhelmed', "don't understand", 'help me', 'frustrated', 'anxious', 'worried', 'scared'];
@@ -129,9 +114,6 @@ function trackQuestion(text) {
   return questionFrequency[key];
 }
 
-// ============================================
-// CHAT UI
-// ============================================
 
 function addMessage(text, sender) {
   const chatMessages = document.getElementById('chatMessages');
@@ -154,9 +136,6 @@ function addMessage(text, sender) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// ============================================
-// MAIN SEND MESSAGE — GROQ API
-// ============================================
 
 async function sendMessage() {
   const input = document.getElementById('chatInput');
@@ -165,14 +144,14 @@ async function sendMessage() {
 
   input.value = '';
 
-  // Add user message to UI
+  
   addMessage(userText, 'user');
 
-  // Show typing indicator
+  
   const typingEl = document.getElementById('typingIndicator');
   typingEl.style.display = 'flex';
 
-  // Sentiment + frequency detection
+  
   const frequency = trackQuestion(userText);
   const isStressed = detectSentiment(userText);
 
@@ -219,28 +198,24 @@ async function sendMessage() {
       addMessage(botReply, 'bot');
     } else {
       console.error('Groq API error response:', data);
-      // Fallback to demo response if API fails
+      
       addMessage(getDemoResponse(userText), 'bot');
     }
 
   } catch (error) {
     typingEl.style.display = 'none';
     console.error('Network/fetch error:', error);
-    // Fallback to demo response on network error
+    
     addMessage(getDemoResponse(userText), 'bot');
   }
 
-  // Proactive fee reminder
+  
   if (userText.toLowerCase().includes('fee') || userText.toLowerCase().includes('payment')) {
     setTimeout(() => {
       showToast('⚡ Reminder: Fee payment deadline is Feb 20!');
     }, 2000);
   }
 }
-
-// ============================================
-// DEMO RESPONSES (Fallback if Groq is down)
-// ============================================
 
 function getDemoResponse(text) {
   const t = text.toLowerCase();
@@ -342,9 +317,6 @@ function getDemoResponse(text) {
   What would you like to know more about?`;
 }
 
-// ============================================
-// INIT
-// ============================================
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
