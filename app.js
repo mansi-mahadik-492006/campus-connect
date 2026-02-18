@@ -2,8 +2,8 @@
 // CAMPUSCONNECT AI AGENT - app.js
 // ============================================
 
-// 🔑 PASTE YOUR GEMINI API KEY HERE
-const GEMINI_API_KEY = "AIzaSyAozTZeVuREabfSSCWtmQjxp3AsVvNKlCA";
+// 🔑 YOUR GROQ API KEY
+const GROQ_API_KEY = "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";
 
 // Student context for personalized AI responses
 const STUDENT_CONTEXT = `
@@ -48,7 +48,7 @@ Scholarship Criteria:
 
 Hostel Rules:
 - Check-in time: 8 AM - 8 PM on working days
-- Monthly fees: ₹8,000 (single) or ₹6,000 (shared)
+- Monthly fees: Rs.8,000 (single) or Rs.6,000 (shared)
 - Requires hostel form, medical certificate, and parent consent
 
 IMPORTANT BEHAVIOR RULES:
@@ -59,13 +59,16 @@ IMPORTANT BEHAVIOR RULES:
 - Give step-by-step instructions when explaining processes
 - Keep responses concise but complete
 - Use emojis naturally to be friendly
-- Always mention which "agent" is helping (e.g., "💰 Financial Agent here!")
+- Always mention which "agent" is helping (e.g., "Financial Agent here!")
+- Format responses using HTML tags like <strong> for bold and <br> for line breaks
 `;
 
-let messageCount = {};
 let questionFrequency = {};
 
-// Page Navigation
+// ============================================
+// PAGE NAVIGATION
+// ============================================
+
 function showPage(pageName) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -73,10 +76,11 @@ function showPage(pageName) {
   event.target.classList.add('active');
 }
 
-// Open chat with a pre-filled question
+// Open chat with a pre-filled question from dashboard agent cards
 function openChat(question) {
-  showPage('chat');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-chat').classList.add('active');
   document.querySelectorAll('.nav-btn')[1].classList.add('active');
   setTimeout(() => {
     document.getElementById('chatInput').value = question;
@@ -84,13 +88,16 @@ function openChat(question) {
   }, 300);
 }
 
-// Quick question buttons
+// Quick question buttons in chat sidebar
 function sendQuick(question) {
   document.getElementById('chatInput').value = question;
   sendMessage();
 }
 
-// Complete a task (demo)
+// ============================================
+// TASK & TOAST
+// ============================================
+
 function completeTask(checkbox, taskType) {
   if (checkbox.checked) {
     showToast('🎉 Task completed! +50 XP earned!');
@@ -99,7 +106,6 @@ function completeTask(checkbox, taskType) {
   }
 }
 
-// Toast notification
 function showToast(message) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
@@ -107,21 +113,26 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// Sentiment / confusion detection
+// ============================================
+// SENTIMENT & FREQUENCY DETECTION
+// ============================================
+
 function detectSentiment(text) {
-  const stressWords = ['confused', 'stressed', 'lost', 'overwhelmed', 'don\'t understand', 'help me', 'frustrated', 'anxious', 'worried', 'scared'];
+  const stressWords = ['confused', 'stressed', 'lost', 'overwhelmed', "don't understand", 'help me', 'frustrated', 'anxious', 'worried', 'scared'];
   const lowerText = text.toLowerCase();
   return stressWords.some(word => lowerText.includes(word));
 }
 
-// Track repeated questions
 function trackQuestion(text) {
   const key = text.toLowerCase().substring(0, 30);
   questionFrequency[key] = (questionFrequency[key] || 0) + 1;
   return questionFrequency[key];
 }
 
-// Add message to chat UI
+// ============================================
+// CHAT UI
+// ============================================
+
 function addMessage(text, sender) {
   const chatMessages = document.getElementById('chatMessages');
   const div = document.createElement('div');
@@ -143,7 +154,10 @@ function addMessage(text, sender) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Main send message function
+// ============================================
+// MAIN SEND MESSAGE — GROQ API
+// ============================================
+
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const userText = input.value.trim();
@@ -151,49 +165,48 @@ async function sendMessage() {
 
   input.value = '';
 
-  // Add user message
+  // Add user message to UI
   addMessage(userText, 'user');
 
   // Show typing indicator
   const typingEl = document.getElementById('typingIndicator');
   typingEl.style.display = 'flex';
 
-  // Track repeated questions (sentiment detection feature)
+  // Sentiment + frequency detection
   const frequency = trackQuestion(userText);
   const isStressed = detectSentiment(userText);
 
-  // If repeated 3 times or stressed → add escalation note
   let extraContext = '';
   if (frequency >= 3) {
-    extraContext = '\n\nNOTE: Student has asked about this topic multiple times. Gently suggest connecting with a human counselor.';
+    extraContext += '\n\nNOTE: Student has asked about this topic multiple times. Gently suggest connecting with a human counselor.';
   }
   if (isStressed) {
     extraContext += '\n\nNOTE: Student seems stressed or confused. Be extra warm and supportive. Offer to connect with a counselor.';
   }
 
   try {
-    // Check if API key is set
-    if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-      // Demo mode — use pre-written responses
-      typingEl.style.display = 'none';
-      const demoResponse = getDemoResponse(userText);
-      addMessage(demoResponse, 'bot');
-      return;
-    }
-
-    // Call Gemini API
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      'https://api.groq.com/openai/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`
+        },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: STUDENT_CONTEXT + extraContext + '\n\nStudent message: ' + userText + '\n\nRespond in a helpful, friendly way. Use HTML formatting like <strong> for important points. Keep response under 200 words.'
-            }]
-          }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+          model: 'llama3-8b-8192',
+          messages: [
+            {
+              role: 'system',
+              content: STUDENT_CONTEXT + extraContext
+            },
+            {
+              role: 'user',
+              content: userText
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 400
         })
       }
     );
@@ -201,21 +214,23 @@ async function sendMessage() {
     const data = await response.json();
     typingEl.style.display = 'none';
 
-    if (data.candidates && data.candidates[0]) {
-      const botReply = data.candidates[0].content.parts[0].text;
+    if (data.choices && data.choices[0]) {
+      const botReply = data.choices[0].message.content;
       addMessage(botReply, 'bot');
     } else {
-      addMessage('Sorry, I had trouble connecting. Please try again! 🔄', 'bot');
+      console.error('Groq API error response:', data);
+      // Fallback to demo response if API fails
+      addMessage(getDemoResponse(userText), 'bot');
     }
 
   } catch (error) {
     typingEl.style.display = 'none';
-    // Fallback to demo responses
-    const demoResponse = getDemoResponse(userText);
-    addMessage(demoResponse, 'bot');
+    console.error('Network/fetch error:', error);
+    // Fallback to demo response on network error
+    addMessage(getDemoResponse(userText), 'bot');
   }
 
-  // Proactive reminder if fee-related
+  // Proactive fee reminder
   if (userText.toLowerCase().includes('fee') || userText.toLowerCase().includes('payment')) {
     setTimeout(() => {
       showToast('⚡ Reminder: Fee payment deadline is Feb 20!');
@@ -223,7 +238,10 @@ async function sendMessage() {
   }
 }
 
-// Demo responses for when API key is not set
+// ============================================
+// DEMO RESPONSES (Fallback if Groq is down)
+// ============================================
+
 function getDemoResponse(text) {
   const t = text.toLowerCase();
 
@@ -324,14 +342,16 @@ function getDemoResponse(text) {
   What would you like to know more about?`;
 }
 
-// Keyboard shortcut
+// ============================================
+// INIT
+// ============================================
+
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     document.getElementById('chatInput') && document.getElementById('chatInput').blur();
   }
 });
 
-// Initialize — show proactive alert on load
 window.addEventListener('load', () => {
   setTimeout(() => {
     showToast('🚨 Proactive Alert: Fee payment due in 2 days!');
