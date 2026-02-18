@@ -3,7 +3,7 @@
 // ============================================
 
 // 🔑 YOUR GROQ API KEY
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = window.GROQ_API_KEY || "REPLACE_ME";
 
 // Student context for personalized AI responses
 const STUDENT_CONTEXT = `
