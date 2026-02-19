@@ -88,6 +88,33 @@ function sendQuick(question) {
 
 function completeTask(checkbox, taskType) {
   if (checkbox.checked) {
+    // Fire confetti
+    confetti({
+      particleCount: 150,
+      spread: 80,
+      origin: { y: 0.6 },
+      colors: ['#4FC3F7', '#A8FF3E', '#FFA502', '#2ED573']
+    });
+    // Second burst after 300ms
+    setTimeout(() => {
+      confetti({
+        particleCount: 80,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#4FC3F7', '#A8FF3E']
+      });
+    }, 300);
+    setTimeout(() => {
+      confetti({
+        particleCount: 80,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#FFA502', '#2ED573']
+      });
+    }, 300);
+
     showToast('🎉 Task completed! +50 XP earned!');
     checkbox.parentElement.classList.add('done');
     checkbox.parentElement.querySelector('label').style.textDecoration = 'line-through';
@@ -328,4 +355,100 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     showToast('🚨 Proactive Alert: Fee payment due in 2 days!');
   }, 2000);
+});
+
+// ============================================
+// LIVE COUNTDOWN TIMERS
+// ============================================
+
+function getTimeRemaining(deadlineDate) {
+  const total = Date.parse(deadlineDate) - Date.parse(new Date());
+  const seconds = Math.floor((total / 1000) % 60);
+  const minutes = Math.floor((total / 1000 / 60) % 60);
+  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(total / (1000 * 60 * 60 * 24));
+  return { total, days, hours, minutes, seconds };
+}
+
+function updateTimer(deadlineDate, timerId, barId) {
+  const timerEl = document.getElementById(timerId);
+  const barEl = document.getElementById(barId);
+  if (!timerEl) return;
+
+  const t = getTimeRemaining(deadlineDate);
+
+  if (t.total <= 0) {
+    timerEl.textContent = "⚠️ DEADLINE PASSED";
+    timerEl.style.color = "#ff4757";
+    if (barEl) barEl.style.width = "100%";
+    return;
+  }
+
+  timerEl.textContent = `${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s remaining`;
+
+  // Auto change colour based on urgency
+  if (t.days <= 1) {
+    timerEl.style.color = "#ff4757";
+    if (barEl) { barEl.style.background = "#ff4757"; barEl.style.width = "95%"; }
+  } else if (t.days <= 4) {
+    timerEl.style.color = "#ffa502";
+    if (barEl) barEl.style.background = "#ffa502";
+  } else {
+    timerEl.style.color = "#2ed573";
+    if (barEl) barEl.style.background = "#2ed573";
+  }
+}
+
+function startAllTimers() {
+  const deadlines = [
+    { date: "Feb 20, 2026 23:59:00", timerId: "timer-fee",    barId: "bar-fee" },
+    { date: "Feb 25, 2026 23:59:00", timerId: "timer-course", barId: "bar-course" },
+    { date: "Feb 28, 2026 23:59:00", timerId: "timer-hostel", barId: "bar-hostel" },
+    { date: "Mar 01, 2026 23:59:00", timerId: "timer-lms",    barId: "bar-lms" },
+  ];
+
+  // Update immediately then every second
+  deadlines.forEach(d => updateTimer(d.date, d.timerId, d.barId));
+  setInterval(() => {
+    deadlines.forEach(d => updateTimer(d.date, d.timerId, d.barId));
+  }, 1000);
+}
+
+// Start timers when page loads
+window.addEventListener('load', () => {
+  startAllTimers();
+  setTimeout(() => {
+    showToast('🚨 Proactive Alert: Fee payment due soon!');
+  }, 2000);
+});
+
+// ============================================
+// NOTIFICATION BELL
+// ============================================
+
+function toggleNotifications() {
+  const dropdown = document.getElementById('notifDropdown');
+  dropdown.classList.toggle('open');
+
+  // Clear badge when opened
+  if (dropdown.classList.contains('open')) {
+    document.getElementById('notifBadge').style.display = 'none';
+  }
+}
+
+function clearAll() {
+  const dropdown = document.getElementById('notifDropdown');
+  const items = dropdown.querySelectorAll('.notif-item');
+  items.forEach(item => item.remove());
+  document.getElementById('notifBadge').style.display = 'none';
+  dropdown.classList.remove('open');
+  showToast('✅ All notifications cleared!');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const wrapper = document.querySelector('.notif-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    document.getElementById('notifDropdown').classList.remove('open');
+  }
 });

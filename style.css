@@ -21,8 +21,15 @@ body {
 .user-avatar { background: linear-gradient(135deg, #4fc3f7, #1a6fc4); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; }
 
 /* PAGES */
-.page { display: none; }
-.page.active { display: block; }
+.page { display: none; opacity: 0; }
+.page.active {
+  display: block;
+  animation: fadeInPage 0.35s ease forwards;
+}
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 
 /* WELCOME BANNER */
@@ -177,3 +184,56 @@ body {
   .chat-sidebar { display: none; }
   .welcome-banner { flex-direction: column; gap: 1rem; }
 }
+
+/* NOTIFICATION BELL */
+.notif-wrapper { position: relative; }
+
+.notif-btn {
+  background: transparent; border: 1px solid #1e2a4a;
+  color: #e0e6f0; font-size: 1.2rem; padding: 0.4rem 0.7rem;
+  border-radius: 8px; cursor: pointer; position: relative;
+  transition: all 0.2s;
+}
+.notif-btn:hover { border-color: #4fc3f7; background: #1a3a6b; }
+
+.notif-badge {
+  position: absolute; top: -6px; right: -6px;
+  background: #ff4757; color: white; font-size: 0.65rem;
+  font-weight: 700; width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  animation: pulse 1.5s infinite;
+}
+
+.notif-dropdown {
+  display: none; position: absolute; top: 110%; right: 0;
+  width: 300px; background: #0d1226; border: 1px solid #1e2a4a;
+  border-radius: 12px; z-index: 500; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.notif-dropdown.open { display: block; animation: fadeIn 0.2s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.notif-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.8rem 1rem; border-bottom: 1px solid #1e2a4a;
+  font-weight: 600; font-size: 0.9rem;
+}
+.clear-btn {
+  background: transparent; border: none; color: #4fc3f7;
+  cursor: pointer; font-size: 0.8rem; font-family: inherit;
+}
+.notif-item {
+  display: flex; gap: 0.8rem; align-items: flex-start;
+  padding: 0.9rem 1rem; border-bottom: 1px solid #1e2a4a;
+  cursor: pointer; transition: background 0.2s;
+}
+.notif-item:hover { background: #111827; }
+.notif-item.urgent { background: #1a0a0a; }
+.notif-item div strong { font-size: 0.88rem; color: #e0e6f0; }
+.notif-item div p { font-size: 0.8rem; color: #8892a4; margin: 0.2rem 0; }
+.notif-item div small { font-size: 0.72rem; color: #4a5568; }
+.notif-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.notif-dot.red { background: #ff4757; }
+.notif-dot.orange { background: #ffa502; }
+.notif-dot.green { background: #2ed573; }

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
   <!-- NAVBAR -->
@@ -20,6 +21,46 @@
       <button class="nav-btn" onclick="showPage('chat')">AI Agent</button>
       <button class="nav-btn" onclick="showPage('admin')">Admin View</button>
     </div>
+
+    <!-- NOTIFICATION BELL -->
+    <div class="notif-wrapper">
+      <button class="notif-btn" onclick="toggleNotifications()">
+        🔔
+        <span class="notif-badge" id="notifBadge">3</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-header">
+          <span>🔔 Notifications</span>
+          <button onclick="clearAll()" class="clear-btn">Clear All</button>
+        </div>
+        <div class="notif-item urgent" onclick="openChat('fee payment')">
+          <span class="notif-dot red"></span>
+          <div>
+            <strong>Fee Payment Due!</strong>
+            <p>Tuition fee deadline in 2 days — Feb 20</p>
+            <small>2 hours ago</small>
+          </div>
+        </div>
+        <div class="notif-item">
+          <span class="notif-dot orange"></span>
+          <div>
+            <strong>3 Tasks Incomplete</strong>
+            <p>Course registration, Hostel form, LMS setup pending</p>
+            <small>5 hours ago</small>
+          </div>
+        </div>
+        <div class="notif-item">
+          <span class="notif-dot green"></span>
+          <div>
+            <strong>Hostel Form Opens Tomorrow</strong>
+            <p>Fill your hostel preference form by Feb 28</p>
+            <small>1 day ago</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
     <div class="nav-user">
       <div class="user-avatar">MS</div>
       <span>Mansi S.</span>
@@ -96,19 +137,19 @@
               <span class="tag urgent-tag">⚡ Due in 2 days</span>
             </div>
             <div class="task">
-              <input type="checkbox" id="t5"/><label for="t5">Register for Semester 1 Courses</label>
+              <input type="checkbox" id="t5" onchange="completeTask(this, 'course')"/><label for="t5">Register for Semester 1 Courses</label>
               <span class="tag pending-tag">Due Feb 25</span>
             </div>
             <div class="task">
-              <input type="checkbox" id="t6"/><label for="t6">Fill Hostel Preference Form</label>
+              <input type="checkbox" id="t6" onchange="completeTask(this, 'hostel')"/><label for="t6">Fill Hostel Preference Form</label>
               <span class="tag pending-tag">Due Feb 28</span>
             </div>
             <div class="task">
-              <input type="checkbox" id="t7"/><label for="t7">Complete LMS Registration</label>
+              <input type="checkbox" id="t7" onchange="completeTask(this, 'lms')"/><label for="t7">Complete LMS Registration</label>
               <span class="tag pending-tag">Due Mar 1</span>
             </div>
             <div class="task">
-              <input type="checkbox" id="t8"/><label for="t8">Attend Mentoring Session</label>
+              <input type="checkbox" id="t8" onchange="completeTask(this, 'mentor')"/><label for="t8">Attend Mentoring Session</label>
               <span class="tag pending-tag">Due Mar 5</span>
             </div>
           </div>
@@ -123,8 +164,11 @@
                 <span class="risk-title">Tuition Fee Payment</span>
                 <span class="risk-level">HIGH RISK</span>
               </div>
-              <div class="risk-bar-wrap"><div class="risk-fill" style="width:90%; background:#ff4757"></div></div>
-              <p>Due: Feb 20, 2026 — 2 days left. <a href="#" onclick="openChat('fee payment deadline')">Ask AI Agent →</a></p>
+              <div class="risk-bar-wrap">
+                <div class="risk-fill" id="bar-fee" style="width:90%; background:#ff4757"></div>
+              </div>
+              <p>Due: Feb 20, 2026 — <strong id="timer-fee" style="color:#ff4757"></strong>
+              <a href="#" onclick="openChat('fee payment deadline')"> Ask AI Agent →</a></p>
             </div>
             <div class="risk-item medium">
               <div class="risk-header">
@@ -132,8 +176,10 @@
                 <span class="risk-title">Course Registration</span>
                 <span class="risk-level">MEDIUM</span>
               </div>
-              <div class="risk-bar-wrap"><div class="risk-fill" style="width:55%; background:#ffa502"></div></div>
-              <p>Due: Feb 25, 2026 — 7 days left</p>
+              <div class="risk-bar-wrap">
+                <div class="risk-fill" id="bar-course" style="width:55%; background:#ffa502"></div>
+              </div>
+              <p>Due: Feb 25, 2026 — <strong id="timer-course" style="color:#ffa502"></strong></p>
             </div>
             <div class="risk-item low">
               <div class="risk-header">
@@ -141,8 +187,10 @@
                 <span class="risk-title">Hostel Form Submission</span>
                 <span class="risk-level">LOW</span>
               </div>
-              <div class="risk-bar-wrap"><div class="risk-fill" style="width:25%; background:#2ed573"></div></div>
-              <p>Due: Feb 28, 2026 — 10 days left</p>
+              <div class="risk-bar-wrap">
+                <div class="risk-fill" id="bar-hostel" style="width:25%; background:#2ed573"></div>
+              </div>
+              <p>Due: Feb 28, 2026 — <strong id="timer-hostel" style="color:#2ed573"></strong></p>
             </div>
             <div class="risk-item low">
               <div class="risk-header">
@@ -150,8 +198,10 @@
                 <span class="risk-title">LMS Setup</span>
                 <span class="risk-level">LOW</span>
               </div>
-              <div class="risk-bar-wrap"><div class="risk-fill" style="width:15%; background:#2ed573"></div></div>
-              <p>Due: Mar 1, 2026 — 11 days left</p>
+              <div class="risk-bar-wrap">
+                <div class="risk-fill" id="bar-lms" style="width:15%; background:#2ed573"></div>
+              </div>
+              <p>Due: Mar 1, 2026 — <strong id="timer-lms" style="color:#2ed573"></strong></p>
             </div>
           </div>
         </div>
@@ -222,7 +272,7 @@
             <div class="bot-avatar">🤖</div>
             <div>
               <h2>CampusConnect AI Agent</h2>
-              <p class="online-status">● Online — Powered by Gemini AI</p>
+              <p class="online-status">● Online — Powered by Groq AI</p>
             </div>
           </div>
         </div>
@@ -244,10 +294,11 @@
             <span></span><span></span><span></span> AI Agent is thinking...
           </div>
           <div class="input-row">
-            <input type="text" id="chatInput" placeholder="Ask me anything about your onboarding..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+            <input type="text" id="chatInput" placeholder="Ask me anything or click 🎤 to speak..." onkeydown="if(event.key==='Enter') sendMessage()"/>
+            <button class="mic-btn" onclick="startVoice()" id="micBtn">🎤</button>
             <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
           </div>
-          <p class="disclaimer">🔒 Powered by Google Gemini AI • Your data is private</p>
+          <p class="disclaimer">🔒 Powered by Groq AI • Your data is private</p>
         </div>
       </div>
     </div>
@@ -336,6 +387,7 @@
   <!-- Toast Notification -->
   <div class="toast" id="toast"></div>
 
+  <script src="env.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
