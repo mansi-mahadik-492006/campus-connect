@@ -10,7 +10,7 @@
 CampusConnect is an AI-powered onboarding companion that guides engineering students through their entire first-year onboarding lifecycle — from document submission to LMS setup.
 
 ## ✨ Key Features
-- **AI Chat Agent** powered by Google Gemini — answers any onboarding question
+- **AI Chat Agent** powered by Google Groq — answers any onboarding question
 - **Gamified Progress Tracking** — XP, levels, leaderboard
 - **Deadline Risk Meter** — flags high-risk students before they miss deadlines
 - **Personalized Checklist** — different journey for each student
@@ -20,12 +20,12 @@ CampusConnect is an AI-powered onboarding companion that guides engineering stud
 
 ## 🛠️ Tech Stack
 - Frontend: HTML5, CSS3, Vanilla JavaScript
-- AI: Google Gemini 1.5 Flash API
+- AI: Google Groq 1.5 Flash API
 - Hosting: GitHub Pages
 
 ## 🏃 How to Run
 1. Clone this repo
-2. Add your Gemini API key in `app.js`
+2. Add your Groq API key in `app.js`
 3. Open `index.html` in browser OR deploy to GitHub Pages
 
 ## 👥 Team
